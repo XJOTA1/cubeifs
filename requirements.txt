@@ -7,3 +7,5 @@ fastexcel
 streamlit-extras
 streamlit-elements
 streamlit-shadcn-ui
+requests
+streamlit-option-menu
