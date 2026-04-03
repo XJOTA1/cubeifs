@@ -4,3 +4,6 @@ altair
 streamlit-aggrid
 xlsxwriter
 fastexcel
+streamlit-extras
+streamlit-elements
+streamlit-shadcn-ui
