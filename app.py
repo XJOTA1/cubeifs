@@ -36,7 +36,8 @@ def aplicar_estilos():
         header {visibility: hidden !important;}
         footer {visibility: hidden !important;}
 
-        html, body, [class*="st-"], p, label, span {
+        /* CORRECCIÓN: Quitamos [class*="st-"] y span para no romper íconos internos */
+        html, body, p, label {
             font-family: 'Inter', sans-serif !important;
             line-height: 1.6 !important;
             color: var(--text-primary) !important;
@@ -78,27 +79,17 @@ def aplicar_estilos():
 
         div[data-testid="stHorizontalBlock"] { gap: 1.5rem !important; align-items: center !important; }
 
+        /* CORRECCIÓN: Dejamos que Streamlit maneje el padding y el display interno */
         [data-testid="stFileUploadDropzone"] {
             background-color: #FAFAFA !important;
             border: 1.5px dashed var(--accent-secondary) !important;
             border-radius: var(--radius-md) !important;
             transition: var(--transition-smooth) !important;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem !important;
         }
         
         [data-testid="stFileUploadDropzone"]:hover {
             border-color: var(--accent-primary) !important;
             background-color: var(--bg-surface-hover) !important;
-        }
-
-        [data-testid="stFileUploadDropzone"] div, 
-        [data-testid="stFileUploadDropzone"] small {
-            color: var(--text-secondary) !important;
-            font-family: 'Inter', sans-serif !important;
         }
 
         button[kind="secondary"] {
@@ -162,19 +153,17 @@ def aplicar_estilos():
             border-radius: var(--radius-md) !important;
             padding: 1.5rem 1rem !important;
             border: 1px solid var(--border-color) !important;
-            /* Sombra hacia afuera (Outer Shadow) */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important; 
             transition: var(--transition-smooth) !important;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centra el contenido */
+            align-items: center; 
             justify-content: center;
             text-align: center;
         }
         
         div[data-testid="stMetric"]:hover {
-            transform: translateY(-4px); /* Efecto de elevación */
-            /* Sombra más pronunciada al pasar el cursor */
+            transform: translateY(-4px);
             box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1) !important; 
             border-color: var(--accent-secondary) !important;
         }
@@ -348,7 +337,6 @@ if st.session_state.df_final is not None:
     gb.configure_pagination(paginationAutoPageSize=True)
     gb.configure_default_column(filter=True)
     
-    # [CORRECCIÓN APLICADA AQUÍ: Envolver el JS en JsCode]
     jscode_diferencia = JsCode("""
     function(params) {
         if (params.value > 0) return {'color': '#991B1B', 'backgroundColor': '#FEE2E2'};
@@ -374,7 +362,7 @@ if st.session_state.df_final is not None:
         height=400, 
         fit_columns_on_grid_load=True, 
         theme='balham',
-        allow_unsafe_jscode=True # Imprescindible para que evalúe el JsCode
+        allow_unsafe_jscode=True
     )
 
     # --- DESCARGAS ---
