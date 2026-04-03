@@ -1,0 +1,6 @@
+streamlit
+polars
+altair
+streamlit-aggrid
+xlsxwriter
+fastexcel
