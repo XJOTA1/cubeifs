@@ -250,12 +250,13 @@ if file_cube and file_ifs:
                         st.error("El archivo IFS no parece tener la estructura correcta (requiere al menos 40 columnas).")
                         st.stop()
 
+                    # AQUÍ ESTÁN LOS CAMBIOS APLICADOS
                     df_ifs = df_ifs.select([
-                        pl.col(i_cols[5]).cast(pl.Utf8).str.strip_chars().alias("Articulo"),
+                        pl.col(i_cols[1]).cast(pl.Utf8).str.strip_chars().alias("Articulo"), # Columna B
                         pl.col(i_cols[3]).cast(pl.Utf8).str.to_lowercase().str.strip_chars().alias("Tipo_Ubicacion"),
                         pl.col(i_cols[4]).cast(pl.Utf8).str.to_lowercase().str.strip_chars().alias("N_Ubicacion"),
                         pl.col(i_cols[38]).cast(pl.Utf8).str.strip_chars().alias("Control_Disp"),
-                        pl.col(i_cols[9]).cast(pl.Float64).fill_null(0).cast(pl.Int64).alias("Cantidad")
+                        pl.col(i_cols[28]).cast(pl.Float64).fill_null(0).cast(pl.Int64).alias("Cantidad") # Columna AC
                     ]).filter(pl.col("Articulo").is_not_null() & (pl.col("Articulo") != ""))
 
                     df_ifs_filtered = df_ifs.filter(
