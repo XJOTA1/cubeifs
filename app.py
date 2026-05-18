@@ -36,7 +36,6 @@ def aplicar_estilos():
         header {visibility: hidden !important;}
         footer {visibility: hidden !important;}
 
-        /* CORRECCIÓN: Quitamos [class*="st-"] y span para no romper íconos internos */
         html, body, p, label {
             font-family: 'Inter', sans-serif !important;
             line-height: 1.6 !important;
@@ -79,7 +78,6 @@ def aplicar_estilos():
 
         div[data-testid="stHorizontalBlock"] { gap: 1.5rem !important; align-items: center !important; }
 
-        /* CORRECCIÓN: Dejamos que Streamlit maneje el padding y el display interno */
         [data-testid="stFileUploadDropzone"] {
             background-color: #FAFAFA !important;
             border: 1.5px dashed var(--accent-secondary) !important;
@@ -241,24 +239,26 @@ if file_cube and file_ifs:
                         pl.col(c_cols[2]).cast(pl.Float64).fill_null(0).cast(pl.Int64).alias("Stock CUBE")     
                     ]).filter(pl.col("Articulo").is_not_null() & (pl.col("Articulo") != ""))
 
-                # --- PROCESAMIENTO IFS ---
+                # --- PROCESAMIENTO IFS (CORREGIDO CON LAS NUEVAS COLUMNAS) ---
                 df_ifs = leer_archivo(file_ifs, skip_rows=1)
                 if df_ifs is not None:
                     i_cols = df_ifs.columns
                     
-                    if len(i_cols) < 40:
-                        st.error("El archivo IFS no parece tener la estructura correcta (requiere al menos 40 columnas).")
+                    # Verificación mínima de columnas considerando que AA es el índice 26 (mínimo 27 columnas requeridas)
+                    if len(i_cols) < 27:
+                        st.error("El archivo IFS no parece tener la estructura correcta (requiere al menos las columnas mapeadas hasta AA).")
                         st.stop()
 
-                    # AQUÍ ESTÁN LOS CAMBIOS APLICADOS
+                    # NUEVO MAPEO DE COLUMNAS APLICADO AQUÍ:
                     df_ifs = df_ifs.select([
-                        pl.col(i_cols[1]).cast(pl.Utf8).str.strip_chars().alias("Articulo"), # Columna B
-                        pl.col(i_cols[36]).cast(pl.Utf8).str.to_lowercase().str.strip_chars().alias("Tipo_Ubicacion"), # Columna AK
-                        pl.col(i_cols[4]).cast(pl.Utf8).str.to_lowercase().str.strip_chars().alias("N_Ubicacion"), # Columna E
-                        pl.col(i_cols[38]).cast(pl.Utf8).str.strip_chars().alias("Control_Disp"), # Columna AM
-                        pl.col(i_cols[28]).cast(pl.Float64).fill_null(0).cast(pl.Int64).alias("Cantidad") # Columna AC
+                        pl.col(i_cols[5]).cast(pl.Utf8).str.strip_chars().alias("Articulo"), # Columna F (Índice 5)
+                        pl.col(i_cols[3]).cast(pl.Utf8).str.to_lowercase().str.strip_chars().alias("Tipo_Ubicacion"), # Columna D (Índice 3)
+                        pl.col(i_cols[4]).cast(pl.Utf8).str.to_lowercase().str.strip_chars().alias("N_Ubicacion"), # Columna E (Índice 4)
+                        pl.col(i_cols[26]).cast(pl.Utf8).str.strip_chars().alias("Control_Disp"), # Columna AA (Índice 26)
+                        pl.col(i_cols[6]).cast(pl.Float64).fill_null(0).cast(pl.Int64).alias("Cantidad") # Columna G (Índice 6)
                     ]).filter(pl.col("Articulo").is_not_null() & (pl.col("Articulo") != ""))
 
+                    # Aplicación de filtros operativos sobre los nuevos índices
                     df_ifs_filtered = df_ifs.filter(
                         pl.col("Tipo_Ubicacion").is_in(["envio", "recogida", "envío"]) 
                     ).filter(
